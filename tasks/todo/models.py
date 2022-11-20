@@ -7,11 +7,16 @@ from rest_framework.authtoken.models import Token
 # Create your models here.
 
 
+def upload_to(instance, filename):
+    return 'images/{filename}'.format(filename=filename)
+
+
 class ImagePost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="todolist", null=True)
     caption = models.CharField(max_length=200)
+    image_url = models.ImageField(upload_to=upload_to, blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.caption

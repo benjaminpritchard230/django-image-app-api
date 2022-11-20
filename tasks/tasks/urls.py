@@ -23,11 +23,10 @@ app_name = 'tasks'
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Api views
-    path('tasks/', ListImagePosts.as_view(), name="tasks"),
+    path('posts/', ListImagePosts.as_view(), name="tasks"),
     path('login/', obtain_auth_token, name="login"),
     path('posts/<int:id>/', SpecificImagePost.as_view(), name="specific_task"),
     path("register/", RegisterUserView.as_view(), name="register"),
 ]
-# imp for what you want to achieve.
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
