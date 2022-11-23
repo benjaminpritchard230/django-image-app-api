@@ -23,9 +23,10 @@ app_name = 'tasks'
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Api views
-    path('posts/', ListImagePosts.as_view(), name="tasks"),
+    path('my_posts/', ListImagePosts.as_view(), name="my_posts"),
+    path('all_posts/', AllImagePosts.as_view(), name='all_posts'),
     path('login/', obtain_auth_token, name="login"),
-    path('posts/<int:id>/', SpecificImagePost.as_view(), name="specific_task"),
+    path('posts/<int:id>/', SpecificImagePost.as_view(), name="specific_image"),
     path("register/", RegisterUserView.as_view(), name="register"),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

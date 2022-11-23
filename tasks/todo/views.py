@@ -11,6 +11,16 @@ from rest_framework import authentication, permissions
 # to a token or posting a new ImagePost to a specific user's ImagePost list
 
 
+class AllImagePosts(APIView):
+    """Class based api view for showing all public image posts regardles of whether user is logged in."""
+
+    def get(self, request, format=None):
+        if request.method == "GET":
+            ImagePosts = ImagePost.objects.filter(public=True)
+            serializer = ImagePostSerializer(ImagePosts, many=True)
+            return Response(serializer.data)
+
+
 class ListImagePosts(APIView):
     """Class based api view for getting the list of ImagePosts corresponding 
     to a token or posting a new ImagePost to a specific user's ImagePost list"""
@@ -39,22 +49,22 @@ class SpecificImagePost(APIView):
 
     def get(self, request, id, format=None):
         try:
-            ImagePost = ImagePost.objects.get(pk=id)
+            post = ImagePost.objects.get(pk=id)
         except ImagePost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        if ImagePost.user == self.request.user:
-            serializer = ImagePostSerializer(ImagePost)
+        if post.user == self.request.user:
+            serializer = ImagePostSerializer(post)
             return Response(serializer.data)
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     def put(self, request, id, format=None):
         try:
-            ImagePost = ImagePost.objects.get(pk=id)
+            post = ImagePost.objects.get(pk=id)
         except ImagePost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ImagePostSerializer(ImagePost, data=request.data)
-        if ImagePost.user == self.request.user:
+        if post.user == self.request.user:
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -64,12 +74,12 @@ class SpecificImagePost(APIView):
 
     def delete(self, request, id, format=None):
         try:
-            ImagePost = ImagePost.objects.get(pk=id)
+            post = ImagePost.objects.get(pk=id)
 
         except ImagePost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        if ImagePost.user == self.request.user:
-            ImagePost.delete()
+        if post.user == self.request.user:
+            post.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
