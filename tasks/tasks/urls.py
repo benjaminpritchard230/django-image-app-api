@@ -23,11 +23,12 @@ app_name = 'tasks'
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Api views
-    path('my_posts/', ListImagePosts.as_view(), name="my_posts"),
-    path('all_posts/', AllImagePosts.as_view(), name='all_posts'),
+    path('my_posts/', ListImagePostsView.as_view(), name="my_posts"),
+    path('all_posts/', AllImagePostsView.as_view(), name='all_posts'),
     path('login/', obtain_auth_token, name="login"),
-    path('posts/<int:id>/', SpecificImagePost.as_view(), name="specific_image"),
+    path('posts/<int:id>/', SpecificImagePostView.as_view(), name="specific_image"),
     path("register/", RegisterUserView.as_view(), name="register"),
+    path("posts/<int:id>/like/", LikePostView.as_view(), name="like"),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

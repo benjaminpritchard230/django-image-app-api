@@ -11,7 +11,23 @@ from rest_framework import authentication, permissions
 # to a token or posting a new ImagePost to a specific user's ImagePost list
 
 
-class AllImagePosts(APIView):
+class LikePostView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request, id, format=None):
+        try:
+            post = ImagePost.objects.get(pk=id)
+        except ImagePost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if post.likes.filter(pk=request.user.pk).exists():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+        return Response(status=status.HTTP_200_OK)
+
+
+class AllImagePostsView(APIView):
     """Class based api view for showing all public image posts regardles of whether user is logged in."""
 
     def get(self, request, format=None):
@@ -21,7 +37,7 @@ class AllImagePosts(APIView):
             return Response(serializer.data)
 
 
-class ListImagePosts(APIView):
+class ListImagePostsView(APIView):
     """Class based api view for getting the list of ImagePosts corresponding 
     to a token or posting a new ImagePost to a specific user's ImagePost list"""
     authentication_classes = [authentication.TokenAuthentication]
@@ -41,7 +57,7 @@ class ListImagePosts(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class SpecificImagePost(APIView):
+class SpecificImagePostView(APIView):
     """Class based  api view for getting a specific ImagePost based on ID, putting new
     information for a ImagePost with a specific ID or deleting a ImagePost with a specific ID"""
     authentication_classes = [authentication.TokenAuthentication]
