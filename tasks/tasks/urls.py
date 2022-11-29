@@ -29,6 +29,7 @@ urlpatterns = [
     path('posts/<int:id>/', SpecificImagePostView.as_view(), name="specific_image"),
     path("register/", RegisterUserView.as_view(), name="register"),
     path("posts/<int:id>/like/", LikePostView.as_view(), name="like"),
+    path("user/<int:id>/", UserInfoView.as_view(), name="user_profile"),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

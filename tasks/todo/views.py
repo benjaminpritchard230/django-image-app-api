@@ -1,6 +1,6 @@
 from django.http import JsonResponse
-from .models import ImagePost
-from .serializers import ImagePostSerializer, CreateUserSerializer
+from .models import ImagePost, User
+from .serializers import ImagePostSerializer, CreateUserSerializer, UserProfileSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -109,3 +109,15 @@ class RegisterUserView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return JsonResponse(serializer.data, safe=False)
+
+
+class UserInfoView(APIView):
+    """Class based api view to get information about a specific user"""
+
+    def get(self, request, id, format=None):
+        try:
+            user = User.objects.get(pk=id)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data)
