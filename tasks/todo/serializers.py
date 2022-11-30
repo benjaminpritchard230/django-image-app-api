@@ -5,9 +5,11 @@ from django.contrib.auth.models import User
 
 
 class ImagePostSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(source='user.username', read_only=True)
+
     class Meta:
         model = ImagePost
-        fields = ['id', 'user', 'caption', 'created_on',
+        fields = ['id', 'user', 'author', 'caption', 'created_on',
                   'image_url', 'likes', 'public']
         read_only_fields = ['user', 'created_on']
 
