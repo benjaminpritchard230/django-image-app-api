@@ -25,7 +25,7 @@ urlpatterns = [
     # Api views
     path('my_posts/', ListImagePostsView.as_view(), name="my_posts"),
     path('all_posts/', AllImagePostsView.as_view(), name='all_posts'),
-    path('login/', obtain_auth_token, name="login"),
+    path('login/', CustomObtainAuthToken.as_view(), name="login"),
     path('posts/<int:id>/', SpecificImagePostView.as_view(), name="specific_image"),
     path("register/", RegisterUserView.as_view(), name="register"),
     path("posts/<int:id>/like/", LikePostView.as_view(), name="like"),
