@@ -11,7 +11,7 @@ class ImagePostSerializer(serializers.ModelSerializer):
         model = ImagePost
         fields = ['id', 'user', 'author', 'caption', 'created_on',
                   'image_url', 'likes', 'public']
-        read_only_fields = ['user', 'created_on']
+        read_only_fields = ['id', 'user', 'author', 'created_on', 'image_url']
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
