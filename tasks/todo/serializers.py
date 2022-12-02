@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 class ImagePostSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='user.username', read_only=True)
+    image_url = serializers.ImageField(required=False)
 
     class Meta:
         model = ImagePost
