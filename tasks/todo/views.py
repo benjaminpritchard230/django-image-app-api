@@ -89,7 +89,7 @@ class SpecificImagePostView(APIView):
             post = ImagePost.objects.get(pk=id)
         except ImagePost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = ImagePostSerializer(ImagePost, data=request.data)
+        serializer = ImagePostSerializer(post, data=request.data)
         if post.user == self.request.user:
             if serializer.is_valid():
                 serializer.save()
