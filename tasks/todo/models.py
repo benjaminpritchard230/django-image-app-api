@@ -17,7 +17,7 @@ class ImagePost(models.Model):
     caption = models.CharField(max_length=200)
     image_url = models.ImageField(upload_to=upload_to, blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    public = models.BooleanField(default=True, null=False, blank=True)
+    public = models.BooleanField(default=True, null=False)
     likes = models.ManyToManyField(User, blank=True, related_name="likes")
 
     def __str__(self):
