@@ -9,7 +9,7 @@ from rest_framework import authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.pagination import PageNumberPagination
 
 
 # Class based api view for getting the list of ImagePosts corresponding
@@ -40,7 +40,7 @@ class LikePostView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class AllImagePostsView(APIView, LimitOffsetPagination):
+class AllImagePostsView(APIView, PageNumberPagination):
     """Class based api view for showing all public image posts regardles of whether user is logged in."""
 
     def get(self, request, format=None):
