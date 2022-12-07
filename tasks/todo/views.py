@@ -9,6 +9,9 @@ from rest_framework import authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
+
+
 # Class based api view for getting the list of ImagePosts corresponding
 # to a token or posting a new ImagePost to a specific user's ImagePost list
 
@@ -37,14 +40,15 @@ class LikePostView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class AllImagePostsView(APIView):
+class AllImagePostsView(APIView, LimitOffsetPagination):
     """Class based api view for showing all public image posts regardles of whether user is logged in."""
 
     def get(self, request, format=None):
         if request.method == "GET":
-            ImagePosts = ImagePost.objects.filter(public=True)
-            serializer = ImagePostSerializer(ImagePosts, many=True)
-            return Response(serializer.data)
+            posts = ImagePost.objects.filter(public=True)
+            results = self.paginate_queryset(posts, request, view=self)
+            serializer = ImagePostSerializer(results, many=True)
+            return self.get_paginated_response(serializer.data)
 
 
 class ListImagePostsView(APIView):
