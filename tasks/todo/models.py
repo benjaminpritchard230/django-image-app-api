@@ -22,3 +22,6 @@ class ImagePost(models.Model):
 
     def __str__(self):
         return self.caption
+
+    class Meta:
+        ordering = ['-created_on']

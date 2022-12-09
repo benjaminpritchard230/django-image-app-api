@@ -44,11 +44,10 @@ class AllImagePostsView(APIView, PageNumberPagination):
     """Class based api view for showing all public image posts regardles of whether user is logged in."""
 
     def get(self, request, format=None):
-        if request.method == "GET":
-            posts = ImagePost.objects.filter(public=True)
-            results = self.paginate_queryset(posts, request, view=self)
-            serializer = ImagePostSerializer(results, many=True)
-            return self.get_paginated_response(serializer.data)
+        posts = ImagePost.objects.filter(public=True)
+        results = self.paginate_queryset(posts, request, view=self)
+        serializer = ImagePostSerializer(results, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 class ListImagePostsView(APIView):
@@ -58,10 +57,9 @@ class ListImagePostsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        if request.method == "GET":
-            ImagePosts = ImagePost.objects.filter(user=self.request.user)
-            serializer = ImagePostSerializer(ImagePosts, many=True)
-            return Response(serializer.data)
+        ImagePosts = ImagePost.objects.filter(user=self.request.user)
+        serializer = ImagePostSerializer(ImagePosts, many=True)
+        return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = ImagePostSerializer(data=request.data)
@@ -134,4 +132,19 @@ class UserInfoView(APIView):
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = UserProfileSerializer(user)
+        return Response(serializer.data)
+
+
+class ListUserPostsView(APIView):
+    """Class based api view for getting the list of ImagePosts made by a specific user"""
+
+    def get(self, request, id, format=None):
+        try:
+            user = User.objects.get(pk=id)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        posts = ImagePost.objects.filter(user=user).filter(public=True)
+
+        serializer = ImagePostSerializer(posts, many=True)
         return Response(serializer.data)
