@@ -67,6 +67,8 @@ class ListImagePostsView(APIView):
             serializer.save(user=self.request.user)
             print(self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SpecificImagePostView(APIView):
