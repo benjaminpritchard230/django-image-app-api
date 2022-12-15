@@ -25,3 +25,16 @@ class ImagePost(models.Model):
 
     class Meta:
         ordering = ['-created_on']
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name="commenter", null=True)
+    post = models.ForeignKey(
+        ImagePost, on_delete=models.CASCADE, related_name="comments")
+    name = models.CharField(max_length=500)
+    body = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+    def __str__(self):
+        return '%s-%s' % (self.post.caption, self.name)

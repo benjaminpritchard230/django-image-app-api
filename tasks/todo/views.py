@@ -1,6 +1,6 @@
 from django.http import JsonResponse
-from .models import ImagePost, User
-from .serializers import ImagePostSerializer, CreateUserSerializer, UserProfileSerializer
+from .models import ImagePost, User, Comment
+from .serializers import ImagePostSerializer, CreateUserSerializer, UserProfileSerializer, CommentSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -150,3 +150,27 @@ class ListUserPostsView(APIView):
 
         serializer = ImagePostSerializer(posts, many=True)
         return Response(serializer.data)
+
+
+class ImagePostCommentsView(APIView):
+
+    def get(self, request, id, format=None):
+        try:
+            post = ImagePost.objects.get(pk=id)
+        except ImagePost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        comments = Comment.objects.filter(post=post)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+    def put(self, request, id, format=None):
+        try:
+            post = ImagePost.objects.get(pk=id)
+        except ImagePost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = CommentSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(post=post, user=self.request.user)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ImagePost
+from .models import ImagePost, Comment
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 
@@ -7,12 +7,22 @@ from django.contrib.auth.models import User
 class ImagePostSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='user.username', read_only=True)
     image_url = serializers.ImageField(required=False)
+    comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = ImagePost
         fields = ['id', 'user', 'author', 'caption', 'created_on',
-                  'image_url', 'likes', 'public']
+                  'image_url', 'likes', 'public', "comments"]
         read_only_fields = ['id', 'user', 'author', 'created_on', 'image_url']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='user.username')
+    post = serializers.IntegerField(source='post.id', read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ['id', "author", 'name', 'body', 'user', 'created_on', "post"]
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
