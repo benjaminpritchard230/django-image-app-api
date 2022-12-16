@@ -152,12 +152,12 @@ class ListUserPostsView(APIView):
         return Response(serializer.data)
 
 
-class PutImagePostCommentView(APIView):
+class AddImagePostCommentView(APIView):
     """Class based api view for adding a new comment to a post, whilst authorised."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    def put(self, request, id, format=None):
+    def post(self, request, id, format=None):
         try:
             post = ImagePost.objects.get(pk=id)
         except ImagePost.DoesNotExist:

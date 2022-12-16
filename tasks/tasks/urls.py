@@ -34,7 +34,7 @@ urlpatterns = [
     path('posts/<int:id>/comments/',
          GetImagePostCommentsView.as_view(), name="post_comments"),
     path('posts/<int:id>/comments/add/',
-         PutImagePostCommentView.as_view(), name="add_comment"),
+         AddImagePostCommentView.as_view(), name="add_comment"),
     path("comments/<int:id>/like/", LikeCommentView.as_view(), name="like_comment"),
     path("comments/<int:id>/", SpecificCommentView.as_view(),
          name="specific_comment"),
