@@ -35,6 +35,8 @@ class Comment(models.Model):
     name = models.CharField(max_length=500)
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    likes = models.ManyToManyField(
+        User, blank=True, related_name="comment_likes")
 
     def __str__(self):
         return '%s-%s' % (self.post.caption, self.name)

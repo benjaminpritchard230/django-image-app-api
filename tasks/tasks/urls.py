@@ -31,8 +31,14 @@ urlpatterns = [
     path("posts/<int:id>/like/", LikePostView.as_view(), name="like"),
     path("user/<int:id>/", UserInfoView.as_view(), name="user_profile"),
     path("user/<int:id>/posts/", ListUserPostsView.as_view(), name="user_posts"),
-    path('posts/<int:id>/comments',
-         ImagePostCommentsView.as_view(), name="comment_posts")
+    path('posts/<int:id>/comments/',
+         GetImagePostCommentsView.as_view(), name="post_comments"),
+    path('posts/<int:id>/comments/add/',
+         PutImagePostCommentView.as_view(), name="add_comment"),
+    path("comments/<int:id>/like/", LikeCommentView.as_view(), name="like_comment"),
+    path("comments/<int:id>/", SpecificCommentView.as_view(),
+         name="specific_comment"),
+
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

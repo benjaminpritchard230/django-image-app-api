@@ -152,16 +152,9 @@ class ListUserPostsView(APIView):
         return Response(serializer.data)
 
 
-class ImagePostCommentsView(APIView):
-
-    def get(self, request, id, format=None):
-        try:
-            post = ImagePost.objects.get(pk=id)
-        except ImagePost.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        comments = Comment.objects.filter(post=post)
-        serializer = CommentSerializer(comments, many=True)
-        return Response(serializer.data)
+class PutImagePostCommentView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     def put(self, request, id, format=None):
         try:
@@ -174,3 +167,74 @@ class ImagePostCommentsView(APIView):
             serializer.save(post=post, user=self.request.user)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+
+
+class GetImagePostCommentsView(APIView):
+    def get(self, request, id, format=None):
+        try:
+            post = ImagePost.objects.get(pk=id)
+        except ImagePost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        comments = Comment.objects.filter(post=post)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+
+class LikeCommentView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request, id, format=None):
+        try:
+            comment = Comment.objects.get(pk=id)
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if comment.likes.filter(pk=request.user.pk).exists():
+            comment.likes.remove(request.user)
+        else:
+            comment.likes.add(request.user)
+        return Response(status=status.HTTP_200_OK)
+
+
+class SpecificCommentView(APIView):
+    """Class based  api view for getting a specific ImagePost based on ID, putting new
+    information for a ImagePost with a specific ID or deleting a ImagePost with a specific ID"""
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, id, format=None):
+        try:
+            comment = Comment.objects.get(pk=id)
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if comment.user == self.request.user:
+            serializer = CommentSerializer(comment)
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    def put(self, request, id, format=None):
+        try:
+            comment = Comment.objects.get(pk=id)
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = CommentSerializer(comment, data=request.data)
+        if comment.user == self.request.user:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    def delete(self, request, id, format=None):
+        try:
+            comment = Comment.objects.get(pk=id)
+
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if comment.user == self.request.user:
+            comment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
