@@ -153,6 +153,7 @@ class ListUserPostsView(APIView):
 
 
 class PutImagePostCommentView(APIView):
+    """Class based api view for adding a new comment to a post, whilst authorised."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -170,6 +171,8 @@ class PutImagePostCommentView(APIView):
 
 
 class GetImagePostCommentsView(APIView):
+    """Class based api view for getting all of the comments associated with a post."""
+
     def get(self, request, id, format=None):
         try:
             post = ImagePost.objects.get(pk=id)
@@ -181,6 +184,7 @@ class GetImagePostCommentsView(APIView):
 
 
 class LikeCommentView(APIView):
+    """Class based api view for liking/unliking comments"""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -197,8 +201,8 @@ class LikeCommentView(APIView):
 
 
 class SpecificCommentView(APIView):
-    """Class based  api view for getting a specific ImagePost based on ID, putting new
-    information for a ImagePost with a specific ID or deleting a ImagePost with a specific ID"""
+    """Class based  api view for getting a specific Comment based on ID, putting new
+    information for a Comment with a specific ID or deleting a Comment with a specific ID"""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
