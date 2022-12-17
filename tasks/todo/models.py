@@ -32,7 +32,7 @@ class Comment(models.Model):
                              related_name="commenter", null=True)
     post = models.ForeignKey(
         ImagePost, on_delete=models.CASCADE, related_name="comments")
-    name = models.CharField(max_length=500)
+    # name = models.CharField(max_length=500, blank=True, null=True)
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     likes = models.ManyToManyField(
