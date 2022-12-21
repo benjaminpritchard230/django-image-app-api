@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from .models import ImagePost, User, Comment
+from .models import ImagePost, Comment
 from .serializers import ImagePostSerializer, CreateUserSerializer, UserProfileSerializer, CommentSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,6 +10,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from django.contrib.auth import get_user_model
 
 
 # Class based api view for getting the list of ImagePosts corresponding
@@ -130,8 +131,8 @@ class UserInfoView(APIView):
 
     def get(self, request, id, format=None):
         try:
-            user = User.objects.get(pk=id)
-        except User.DoesNotExist:
+            user = get_user_model().objects.get(pk=id)
+        except get_user_model().DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = UserProfileSerializer(user)
         return Response(serializer.data)
@@ -142,8 +143,8 @@ class ListUserPostsView(APIView):
 
     def get(self, request, id, format=None):
         try:
-            user = User.objects.get(pk=id)
-        except User.DoesNotExist:
+            user = get_user_model().objects.get(pk=id)
+        except get_user_model().DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         posts = ImagePost.objects.filter(user=user).filter(public=True)

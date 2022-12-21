@@ -1,9 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
+from django.utils.html import mark_safe
+
 # Create your models here.
 
 
@@ -11,14 +14,20 @@ def upload_to(instance, filename):
     return 'images/{filename}'.format(filename=filename)
 
 
+class MyUser(AbstractUser):
+    profile_image = models.ImageField(
+        upload_to=upload_to, blank=True, null=True)
+
+
 class ImagePost(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
                              related_name="todolist", null=True)
     caption = models.CharField(max_length=200)
     image_url = models.ImageField(upload_to=upload_to, blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     public = models.BooleanField(default=True, null=False)
-    likes = models.ManyToManyField(User, blank=True, related_name="likes")
+    likes = models.ManyToManyField(
+        get_user_model(), blank=True, related_name="likes")
 
     def __str__(self):
         return self.caption
@@ -28,7 +37,7 @@ class ImagePost(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
                              related_name="commenter", null=True)
     post = models.ForeignKey(
         ImagePost, on_delete=models.CASCADE, related_name="comments")
@@ -36,7 +45,10 @@ class Comment(models.Model):
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     likes = models.ManyToManyField(
-        User, blank=True, related_name="comment_likes")
+        get_user_model(), blank=True, related_name="comment_likes")
 
     def __str__(self):
         return '%s-%s' % (self.post.caption, self.name)
+
+    # class Meta:
+    #     ordering = ['-created_on']

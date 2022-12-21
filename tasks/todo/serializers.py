@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import ImagePost, Comment
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
 
 
 class ImagePostSerializer(serializers.ModelSerializer):
@@ -36,7 +35,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         print(validated_data)
         password = validated_data.pop('password')
         print(password)
-        user = User.objects.create_user(
+        user = get_user_model().objects.create_user(
             validated_data['username'],
         )
         user.set_password(password)
@@ -46,6 +45,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ["username"]
+        model = get_user_model()
+        fields = ["username", "profile_image"]
         # read_only_fields = [""]
