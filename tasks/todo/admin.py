@@ -4,6 +4,6 @@ from django.contrib.auth.admin import UserAdmin
 from .models import MyUser
 
 # Register your models here.
-admin.site.register(MyUser, UserAdmin)
+admin.site.register(MyUser)
 admin.site.register(ImagePost)
 admin.site.register(Comment)

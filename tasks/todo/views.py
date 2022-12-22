@@ -18,6 +18,8 @@ from django.contrib.auth import get_user_model
 
 
 class CustomObtainAuthToken(ObtainAuthToken):
+    """Api view for getting token."""
+
     def post(self, request, *args, **kwargs):
         response = super(CustomObtainAuthToken, self).post(
             request, *args, **kwargs)
@@ -26,6 +28,7 @@ class CustomObtainAuthToken(ObtainAuthToken):
 
 
 class LikePostView(APIView):
+    """Api view for liking a post if logged in."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -139,6 +142,7 @@ class UserInfoView(APIView):
 
 
 class EditUserInfoView(APIView):
+    """API View for editing user info of currently logged in user."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
