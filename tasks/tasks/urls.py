@@ -33,6 +33,7 @@ urlpatterns = [
     path("user/<int:id>/posts/", ListUserPostsView.as_view(), name="user_posts"),
     path('posts/<int:id>/comments/',
          GetImagePostCommentsView.as_view(), name="post_comments"),
+    path("user/", EditUserInfoView.as_view(), name="edit_user"),
     path('posts/<int:id>/comments/add/',
          AddImagePostCommentView.as_view(), name="add_comment"),
     path("comments/<int:id>/like/", LikeCommentView.as_view(), name="like_comment"),

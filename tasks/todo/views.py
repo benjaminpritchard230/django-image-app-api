@@ -52,7 +52,7 @@ class AllImagePostsView(APIView, PageNumberPagination):
 
 
 class ListImagePostsView(APIView):
-    """Class based api view for getting the list of ImagePosts corresponding 
+    """Class based api view for getting the list of ImagePosts corresponding
     to a token or posting a new ImagePost to a specific user's ImagePost list"""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -136,6 +136,21 @@ class UserInfoView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = UserProfileSerializer(user)
         return Response(serializer.data)
+
+
+class EditUserInfoView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request, format=None):
+        user = self.request.user
+        serializer = UserProfileSerializer(
+            user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class ListUserPostsView(APIView):
