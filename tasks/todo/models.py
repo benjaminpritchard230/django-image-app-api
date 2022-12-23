@@ -17,6 +17,8 @@ def upload_to(instance, filename):
 class MyUser(AbstractUser):
     profile_image = models.ImageField(
         upload_to=upload_to, blank=True, null=True)
+    about_me = models.CharField(max_length=200, blank=True, null=True)
+    location = models.CharField(max_length=200, blank=True, null=True)
 
 
 class ImagePost(models.Model):

@@ -46,5 +46,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ["profile_image"]
-        read_only_fields = ["username"]
+        fields = '__all__'
+        read_only_fields = ["username", "is_staff", "is_active",
+                            "date_joined", "user_permissions", "groups", "last_login", "id", ]
