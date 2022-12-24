@@ -146,7 +146,7 @@ class EditUserInfoView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    def put(self, request, format=None):
+    def patch(self, request, format=None):
         user = self.request.user
         serializer = UserProfileSerializer(
             user, data=request.data, partial=True)
