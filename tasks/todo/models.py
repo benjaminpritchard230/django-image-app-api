@@ -19,6 +19,9 @@ class MyUser(AbstractUser):
         upload_to=upload_to, blank=True, null=True)
     about_me = models.CharField(max_length=200, blank=True, null=True)
     location = models.CharField(max_length=200, blank=True, null=True)
+    following = models.ManyToManyField(
+        "self", blank=True, related_name="followers", symmetrical=False
+    )
 
 
 class ImagePost(models.Model):

@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import ImagePost, Comment
 from django.contrib.auth import get_user_model
+from taggit.serializers import (TagListSerializerField,
+                                TaggitSerializer)
 
 
 class ImagePostSerializer(serializers.ModelSerializer):
@@ -49,3 +51,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ["username", "is_staff", "is_active",
                             "date_joined", "user_permissions", "groups", "last_login", "id", ]
+
+
+class FollowerSerializer(serializers.ModelSerializer):
+    tags = TagListSerializerField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ["following"]

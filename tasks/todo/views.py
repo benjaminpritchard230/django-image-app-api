@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from .models import ImagePost, Comment
-from .serializers import ImagePostSerializer, CreateUserSerializer, UserProfileSerializer, CommentSerializer
+from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -75,6 +75,23 @@ class ListImagePostsView(APIView):
             return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
+class LikeCommentView(APIView):
+    """Class based api view for liking/unliking comments"""
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request, id, format=None):
+        try:
+            comment = Comment.objects.get(pk=id)
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if comment.likes.filter(pk=request.user.pk).exists():
+            comment.likes.remove(request.user)
+        else:
+            comment.likes.add(request.user)
+        return Response(status=status.HTTP_200_OK)
+
+
 class SpecificImagePostView(APIView):
     """Class based  api view for getting a specific ImagePost based on ID, putting new
     information for a ImagePost with a specific ID or deleting a ImagePost with a specific ID"""
@@ -146,6 +163,14 @@ class EditUserInfoView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
+    def get(self, request, format=None):
+        try:
+            user = self.request.user
+        except get_user_model().DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data)
+
     def patch(self, request, format=None):
         user = self.request.user
         serializer = UserProfileSerializer(
@@ -155,6 +180,22 @@ class EditUserInfoView(APIView):
             return Response(serializer.data)
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+# class FollowUserView(APIView):
+#     authentication_classes = [authentication.TokenAuthentication]
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def put(self, request, id, format=None):
+#         try:
+#             post = ImagePost.objects.get(pk=id)
+#         except ImagePost.DoesNotExist:
+#             return Response(status=status.HTTP_404_NOT_FOUND)
+#         if post.likes.filter(pk=request.user.pk).exists():
+#             post.likes.remove(request.user)
+#         else:
+#             post.likes.add(request.user)
+#         return Response(status=status.HTTP_200_OK)
 
 
 class ListUserPostsView(APIView):
@@ -203,20 +244,20 @@ class GetImagePostCommentsView(APIView):
         return Response(serializer.data)
 
 
-class LikeCommentView(APIView):
-    """Class based api view for liking/unliking comments"""
+class FollowUserView(APIView):
+    """Class based api view for following other users whilst logged in."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def put(self, request, id, format=None):
         try:
-            comment = Comment.objects.get(pk=id)
-        except Comment.DoesNotExist:
+            other_user = get_user_model().objects.get(pk=id)
+        except get_user_model().DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        if comment.likes.filter(pk=request.user.pk).exists():
-            comment.likes.remove(request.user)
+        if self.request.user.following.filter(pk=other_user.pk).exists():
+            self.request.user.following.remove(other_user)
         else:
-            comment.likes.add(request.user)
+            self.request.user.following.add(other_user)
         return Response(status=status.HTTP_200_OK)
 
 
