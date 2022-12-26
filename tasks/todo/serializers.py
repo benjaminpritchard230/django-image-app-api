@@ -9,11 +9,13 @@ class ImagePostSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='user.username', read_only=True)
     image_url = serializers.ImageField(required=False)
     comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    liked_by = serializers.StringRelatedField(
+        many=True, source="likes", read_only=True)
 
     class Meta:
         model = ImagePost
-        fields = ['id', 'user', 'author', 'caption', 'created_on',
-                  'image_url', 'likes', 'public', "comments"]
+        fields = "__all__"
         read_only_fields = ['id', 'user', 'author', 'created_on', 'image_url']
 
 
