@@ -51,6 +51,11 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    followers_names = serializers.StringRelatedField(
+        many=True, source="followers", read_only=True)
+    following = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    following_names = serializers.StringRelatedField(
+        many=True, source="following", read_only=True)
 
     class Meta:
         model = get_user_model()
