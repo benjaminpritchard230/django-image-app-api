@@ -54,8 +54,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class FollowerSerializer(serializers.ModelSerializer):
-    tags = TagListSerializerField()
 
     class Meta:
         model = get_user_model()
-        fields = ["following"]
+        fields = ["username", "id", ]
