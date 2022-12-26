@@ -32,7 +32,6 @@ urlpatterns = [
     path("user/<int:id>/", UserInfoView.as_view(), name="user_profile"),
     path("user/<int:id>/follow/", FollowUserView.as_view(), name="follow_user"),
     path("user/<int:id>/posts/", ListUserPostsView.as_view(), name="user_posts"),
-    path("user/<int:id>/followers/", FollowedByView.as_view(), name="followed_by"),
     path('posts/<int:id>/comments/',
          GetImagePostCommentsView.as_view(), name="post_comments"),
     path("user/", EditUserInfoView.as_view(), name="edit_user"),

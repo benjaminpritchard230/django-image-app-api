@@ -261,19 +261,6 @@ class FollowUserView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class FollowedByView(APIView):
-    """Class based api view for getting a user's followers."""
-
-    def get(self, request, id, format=None):
-        try:
-            other_user = get_user_model().objects.get(pk=id)
-        except get_user_model().DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = FollowerSerializer(
-            other_user.followers.all(), many=True)
-        return Response(serializer.data)
-
-
 class SpecificCommentView(APIView):
     """Class based  api view for getting a specific Comment based on ID, putting new
     information for a Comment with a specific ID or deleting a Comment with a specific ID"""
