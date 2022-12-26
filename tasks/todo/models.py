@@ -53,7 +53,7 @@ class Comment(models.Model):
         get_user_model(), blank=True, related_name="comment_likes")
 
     def __str__(self):
-        return '%s-%s' % (self.post.caption, self.name)
+        return '%s-%s' % (self.post.caption, self.user.username)
 
     # class Meta:
     #     ordering = ['-created_on']

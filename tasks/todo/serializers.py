@@ -20,11 +20,13 @@ class ImagePostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='user.username')
     post = serializers.IntegerField(source='post.id', read_only=True)
+    likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    liked_by = serializers.StringRelatedField(
+        many=True, source="likes", read_only=True)
 
     class Meta:
         model = Comment
-        fields = ['id', "author", 'body',
-                  'user', 'created_on', "post", "likes"]
+        fields = "__all__"
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
