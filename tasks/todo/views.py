@@ -54,6 +54,22 @@ class AllImagePostsView(APIView, PageNumberPagination):
         return self.get_paginated_response(serializer.data)
 
 
+class UserFollowingPostsView(APIView):
+    """Class based api view for showing image posts posted by people use is following."""
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+
+        def get_queryset(self):
+            following = self.request.user.following.all()
+            following_posts = ImagePost.objects.filter(
+                user__in=following, public=True)
+            return following_posts
+        serializer = ImagePostSerializer(get_queryset(self), many=True)
+        return Response(data=serializer.data)
+
+
 class ListImagePostsView(APIView):
     """Class based api view for getting the list of ImagePosts corresponding
     to a token or posting a new ImagePost to a specific user's ImagePost list"""

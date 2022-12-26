@@ -29,6 +29,8 @@ urlpatterns = [
     path('posts/<int:id>/', SpecificImagePostView.as_view(), name="specific_image"),
     path("register/", RegisterUserView.as_view(), name="register"),
     path("posts/<int:id>/like/", LikePostView.as_view(), name="like"),
+    path("posts/following/", UserFollowingPostsView.as_view(),
+         name="following_posts"),
     path("user/<int:id>/", UserInfoView.as_view(), name="user_profile"),
     path("user/<int:id>/follow/", FollowUserView.as_view(), name="follow_user"),
     path("user/<int:id>/posts/", ListUserPostsView.as_view(), name="user_posts"),
