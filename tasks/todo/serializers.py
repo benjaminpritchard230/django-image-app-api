@@ -54,9 +54,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = '__all__'
+        # fields = '__all__'
         read_only_fields = ["username", "is_staff", "is_active",
                             "date_joined", "user_permissions", "groups", "last_login", "id", ]
+        exclude = ("password", "first_name", "email", "groups",
+                   "last_name", "is_superuser", "is_staff", "user_permissions")
 
 
 class FollowerSerializer(serializers.ModelSerializer):
