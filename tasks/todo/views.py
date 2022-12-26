@@ -262,7 +262,7 @@ class FollowUserView(APIView):
 
 
 class FollowedByView(APIView):
-    """Class based api view for following other users whilst logged in."""
+    """Class based api view for getting a user's followers."""
 
     def get(self, request, id, format=None):
         try:
