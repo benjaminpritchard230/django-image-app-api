@@ -23,20 +23,24 @@ app_name = 'tasks'
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Api views
-    path('my_posts/', ListImagePostsView.as_view(), name="my_posts"),
-    path('all_posts/', AllImagePostsView.as_view(), name='all_posts'),
+    # Auth views
     path('login/', CustomObtainAuthToken.as_view(), name="login"),
-    path('posts/<int:id>/', SpecificImagePostView.as_view(), name="specific_image"),
     path("register/", RegisterUserView.as_view(), name="register"),
-    path("posts/<int:id>/like/", LikePostView.as_view(), name="like"),
-    path("posts/following/", UserFollowingPostsView.as_view(),
-         name="following_posts"),
+    # User urls
     path("user/<int:id>/", UserInfoView.as_view(), name="user_profile"),
     path("user/<int:id>/follow/", FollowUserView.as_view(), name="follow_user"),
     path("user/<int:id>/posts/", ListUserPostsView.as_view(), name="user_posts"),
+    path("user/", EditUserInfoView.as_view(), name="edit_user"),
+    # Post urls
+    path('posts/<int:id>/', SpecificImagePostView.as_view(), name="specific_image"),
+    path('posts/my/', ListImagePostsView.as_view(), name="my_posts"),
+    path('posts/all/', AllImagePostsView.as_view(), name='all_posts'),
+    path("posts/<int:id>/like/", LikePostView.as_view(), name="like"),
+    path("posts/following/", UserFollowingPostsView.as_view(),
+         name="following_posts"),
+    # Comments urls
     path('posts/<int:id>/comments/',
          GetImagePostCommentsView.as_view(), name="post_comments"),
-    path("user/", EditUserInfoView.as_view(), name="edit_user"),
     path('posts/<int:id>/comments/add/',
          AddImagePostCommentView.as_view(), name="add_comment"),
     path("comments/<int:id>/like/", LikeCommentView.as_view(), name="like_comment"),

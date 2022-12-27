@@ -55,7 +55,7 @@ class AllImagePostsView(APIView, PageNumberPagination):
 
 
 class UserFollowingPostsView(APIView):
-    """Class based api view for showing image posts posted by people use is following."""
+    """Class based api view for showing image posts posted by people user is following."""
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
