@@ -24,7 +24,9 @@ class CustomObtainAuthToken(ObtainAuthToken):
         response = super(CustomObtainAuthToken, self).post(
             request, *args, **kwargs)
         token = Token.objects.get(key=response.data['token'])
-        return Response({'token': token.key, 'id': token.user_id})
+        username = str(token.user)
+        print(token.user)
+        return Response({'token': token.key, 'id': token.user_id, "username": username})
 
 
 class LikePostView(APIView):
