@@ -62,7 +62,7 @@ class UserFollowingPostsView(APIView):
     def get(self, request, format=None):
 
         def get_queryset(self):
-            following = self.request.user.following.all()
+            following = request.user.following.all()
             following_posts = ImagePost.objects.filter(
                 user__in=following, public=True)
             return following_posts
@@ -77,15 +77,15 @@ class ListImagePostsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        ImagePosts = ImagePost.objects.filter(user=self.request.user)
+        ImagePosts = ImagePost.objects.filter(user=request.user)
         serializer = ImagePostSerializer(ImagePosts, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = ImagePostSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=self.request.user)
-            print(self.request.user)
+            serializer.save(user=request.user)
+            print(request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
@@ -119,7 +119,7 @@ class SpecificImagePostView(APIView):
             post = ImagePost.objects.get(pk=id)
         except ImagePost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        if post.user == self.request.user:
+        if post.user == request.user:
             serializer = ImagePostSerializer(post)
             return Response(serializer.data)
         else:
@@ -131,7 +131,7 @@ class SpecificImagePostView(APIView):
         except ImagePost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ImagePostSerializer(post, data=request.data)
-        if post.user == self.request.user:
+        if post.user == request.user:
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -145,7 +145,7 @@ class SpecificImagePostView(APIView):
 
         except ImagePost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        if post.user == self.request.user:
+        if post.user == request.user:
             post.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
@@ -181,14 +181,14 @@ class EditUserInfoView(APIView):
 
     def get(self, request, format=None):
         try:
-            user = self.request.user
+            user = request.user
         except get_user_model().DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = UserProfileSerializer(user)
         return Response(serializer.data)
 
     def patch(self, request, format=None):
-        user = self.request.user
+        user = request.user
         serializer = UserProfileSerializer(
             user, data=request.data, partial=True)
         if serializer.is_valid():
@@ -242,7 +242,7 @@ class AddImagePostCommentView(APIView):
         serializer = CommentSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save(post=post, user=self.request.user)
+            serializer.save(post=post, user=request.user)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
@@ -270,10 +270,10 @@ class FollowUserView(APIView):
             other_user = get_user_model().objects.get(pk=id)
         except get_user_model().DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        if self.request.user.following.filter(pk=other_user.pk).exists():
-            self.request.user.following.remove(other_user)
+        if request.user.following.filter(pk=other_user.pk).exists():
+            request.user.following.remove(other_user)
         else:
-            self.request.user.following.add(other_user)
+            request.user.following.add(other_user)
         return Response(status=status.HTTP_200_OK)
 
 
@@ -288,7 +288,7 @@ class SpecificCommentView(APIView):
             comment = Comment.objects.get(pk=id)
         except Comment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        if comment.user == self.request.user:
+        if comment.user == request.user:
             serializer = CommentSerializer(comment)
             return Response(serializer.data)
         else:
@@ -300,7 +300,7 @@ class SpecificCommentView(APIView):
         except Comment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = CommentSerializer(comment, data=request.data)
-        if comment.user == self.request.user:
+        if comment.user == request.user:
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -314,7 +314,7 @@ class SpecificCommentView(APIView):
 
         except Comment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        if comment.user == self.request.user:
+        if comment.user == request.user:
             comment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
