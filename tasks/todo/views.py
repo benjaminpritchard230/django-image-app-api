@@ -11,6 +11,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from django.contrib.auth import get_user_model
+from notifications.signals import notify
 
 
 # Class based api view for getting the list of ImagePosts corresponding
@@ -99,14 +100,19 @@ class LikeCommentView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def put(self, request, id, format=None):
+        user = request.user
         try:
             comment = Comment.objects.get(pk=id)
         except Comment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         if comment.likes.filter(pk=request.user.pk).exists():
             comment.likes.remove(request.user)
+            notify.send(user, recipient=user,
+                        verb='you reached level 10')
         else:
             comment.likes.add(request.user)
+            notify.send(user, recipient=user,
+                        verb='you reached level 10')
         return Response(status=status.HTTP_200_OK)
 
 

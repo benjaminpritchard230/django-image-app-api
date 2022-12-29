@@ -14,11 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from todo.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.authtoken.views import obtain_auth_token
+import notifications.urls
+import notifications_rest.urls
+
 app_name = 'tasks'
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -46,6 +49,11 @@ urlpatterns = [
     path("comments/<int:id>/like/", LikeCommentView.as_view(), name="like_comment"),
     path("comments/<int:id>/", SpecificCommentView.as_view(),
          name="specific_comment"),
+    # Notifications urls
+    path('inbox/notifications/',
+         include(notifications.urls, namespace='notifications')),
+    path('notifications/', include(notifications_rest.urls)),
+
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
