@@ -38,6 +38,7 @@ class LikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def put(self, request, id, format=None):
+        user = request.user
         try:
             post = ImagePost.objects.get(pk=id)
         except ImagePost.DoesNotExist:
@@ -46,6 +47,8 @@ class LikePostView(APIView):
             post.likes.remove(request.user)
         else:
             post.likes.add(request.user)
+            notify.send(user, recipient=post.user,
+                        verb=f"{user.username} liked your post.")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -244,6 +247,8 @@ class AddImagePostCommentView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, id, format=None):
+        user = request.user
+        print(request.data)
         try:
             post = ImagePost.objects.get(pk=id)
         except ImagePost.DoesNotExist:
@@ -252,6 +257,8 @@ class AddImagePostCommentView(APIView):
 
         if serializer.is_valid():
             serializer.save(post=post, user=request.user)
+            notify.send(user, recipient=post.user,
+                        verb=f"{user.username} commented on your post.")
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
