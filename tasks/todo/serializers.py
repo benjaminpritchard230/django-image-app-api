@@ -3,6 +3,7 @@ from .models import ImagePost, Comment
 from django.contrib.auth import get_user_model
 from taggit.serializers import (TagListSerializerField,
                                 TaggitSerializer)
+from notifications_rest.serializers import *
 
 
 class ImagePostSerializer(serializers.ModelSerializer):
@@ -71,3 +72,11 @@ class FollowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ["username", "id", ]
+
+
+class UpdateNotificationSerializer(serializers.ModelSerializer):
+    unread = serializers.BooleanField()
+
+    class Meta:
+        model = Notification
+        fields = ['unread', ]

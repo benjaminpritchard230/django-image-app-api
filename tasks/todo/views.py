@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from django.contrib.auth import get_user_model
 from notifications.signals import notify
+from notifications.models import *
+from notifications_rest.serializers import *
 
 
 # Class based api view for getting the list of ImagePosts corresponding
@@ -107,12 +109,11 @@ class LikeCommentView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         if comment.likes.filter(pk=request.user.pk).exists():
             comment.likes.remove(request.user)
-            notify.send(user, recipient=user,
-                        verb='you reached level 10')
+
         else:
             comment.likes.add(request.user)
-            notify.send(user, recipient=user,
-                        verb='you reached level 10')
+            notify.send(user, recipient=comment.user,
+                        verb=f"{user.username} liked your comment.")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -274,6 +275,7 @@ class FollowUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def put(self, request, id, format=None):
+        user = request.user
         try:
             other_user = get_user_model().objects.get(pk=id)
         except get_user_model().DoesNotExist:
@@ -282,6 +284,8 @@ class FollowUserView(APIView):
             request.user.following.remove(other_user)
         else:
             request.user.following.add(other_user)
+            notify.send(user, recipient=other_user,
+                        verb=f"{user.username} is now following you.")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -325,5 +329,44 @@ class SpecificCommentView(APIView):
         if comment.user == request.user:
             comment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ListMyNotificationsView(APIView):
+    """Class based api view for getting the list of ImagePosts corresponding
+    to a token or posting a new ImagePost to a specific user's ImagePost list"""
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        notifications = Notification.objects.filter(recipient=request.user)
+        serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data)
+
+
+class SpecificNotificationView(APIView):
+    """Class based api view for getting the list of ImagePosts corresponding
+    to a token or posting a new ImagePost to a specific user's ImagePost list"""
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, id, format=None):
+        notification = Notification.objects.filter(pk=id)
+        serializer = NotificationSerializer(notification, many=True)
+        return Response(serializer.data)
+
+    def patch(self, request, id, format=None):
+        try:
+            notification = Notification.objects.get(pk=id)
+        except notification.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = UpdateNotificationSerializer(
+            notification, data=request.data)
+        if notification.recipient == self.request.user:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)

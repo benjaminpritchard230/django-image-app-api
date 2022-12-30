@@ -53,6 +53,11 @@ urlpatterns = [
     path('inbox/notifications/',
          include(notifications.urls, namespace='notifications')),
     path('notifications/', include(notifications_rest.urls)),
+    path("my_notifications/", ListMyNotificationsView.as_view(),
+         name="my_notifications"),
+    path("my_notifications/<int:id>/", SpecificNotificationView.as_view(),
+         name="specific_notification"),
+
 
 
 ]
