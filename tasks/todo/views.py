@@ -47,8 +47,9 @@ class LikePostView(APIView):
             post.likes.remove(request.user)
         else:
             post.likes.add(request.user)
-            notify.send(user, recipient=post.user,
-                        verb=f"{user.username} liked your post.")
+            if user != post.user:
+                notify.send(user, recipient=post.user,
+                            verb=f"{user.username} liked your post.")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -115,8 +116,9 @@ class LikeCommentView(APIView):
 
         else:
             comment.likes.add(request.user)
-            notify.send(user, recipient=comment.user,
-                        verb=f"{user.username} liked your comment.")
+            if user != comment.user:
+                notify.send(user, recipient=comment.user,
+                            verb=f"{user.username} liked your comment.")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -257,8 +259,9 @@ class AddImagePostCommentView(APIView):
 
         if serializer.is_valid():
             serializer.save(post=post, user=request.user)
-            notify.send(user, recipient=post.user,
-                        verb=f"{user.username} commented on your post.")
+            if user != post.user:
+                notify.send(user, recipient=post.user,
+                            verb=f"{user.username} commented on your post.")
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
@@ -291,8 +294,9 @@ class FollowUserView(APIView):
             request.user.following.remove(other_user)
         else:
             request.user.following.add(other_user)
-            notify.send(user, recipient=other_user,
-                        verb=f"{user.username} is now following you.")
+            if user != other_user:
+                notify.send(user, recipient=other_user,
+                            verb=f"{user.username} is now following you.")
         return Response(status=status.HTTP_200_OK)
 
 
